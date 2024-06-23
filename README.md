@@ -42,11 +42,7 @@ Esto significa que cualquier solicitud realizada a las rutas bajo `/api` desde c
 
 4. Crea un archivo .env en el directorio raíz del proyecto y agrega tus variables de entorno:
 
-    DB_HOST
-    DB_PORT
-    DB_USER
-    DB_PASSWORD
-    DB_NAME
+    DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME
 
 5. Ejecuta la aplicación:
 
