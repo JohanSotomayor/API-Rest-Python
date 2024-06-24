@@ -4,15 +4,15 @@ class ErrorHandler:
     @staticmethod
     def not_found_error(error):
         response = jsonify({
-                'error': 'Not found',
-                'status':400
+                'message': 'Not found',
+                'status':404
                 })
         return response
 
     @staticmethod
     def unhandled_exception(error):
         response = jsonify({
-                'error': str(error),
+                'message': str(error),
                 'status':500
                 })
         response.status_code = 500
