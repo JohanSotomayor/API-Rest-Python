@@ -1,7 +1,7 @@
 # app/views.py
 from flask import Blueprint, jsonify, request, g
 from sqlalchemy.exc import SQLAlchemyError
-from ..models import db, Product
+from ..models import db, Product, Category
 # from models import Product
 
 class ProductRoutes:
@@ -42,7 +42,8 @@ class ProductRoutes:
 
         @self.main.route('/', methods=['GET'])
         def get_products():
-            products = Product.query.all()
+            query_result = db.session.query(Product, Category).join(Category, Product.CategoryID == Category.CategoryID).all()
+            # products = Product.query.all()
             result = [
                 {
                     'productID': product.ProductID,
@@ -53,8 +54,9 @@ class ProductRoutes:
                     'stock': product.Stock,
                     'hasIva': product.HasIva,
                     'percentIva': product.PercentIva,
-                    'categoryID': product.CategoryID,
-                } for product in products
+                    'categoryID': category.CategoryID,
+                    'categoryName': category.CategoryName,
+                } for product, category in query_result
             ]
             return jsonify({"data":result}), 200
 

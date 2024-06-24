@@ -7,7 +7,7 @@ class OrderDetail(db.Model):
     OrderID = db.Column(db.Integer, db.ForeignKey('Orders.OrderID'))
     ProductID = db.Column(db.Integer, db.ForeignKey('Products.ProductID'))
     Quantity = db.Column(db.Integer)
-    UnitPrice = db.Column(db.DECIMAL(precision=10, scale=2))
+    UnitPrice = db.Column(db.DECIMAL(precision=18, scale=2))
     AmountIva = db.Column(db.DECIMAL(precision=10, scale=2))
 
     def __repr__(self):

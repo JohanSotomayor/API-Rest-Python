@@ -10,7 +10,7 @@ class ClientsRoutes:
         self.Clients_routes()
 
     def Clients_routes(self):
-        @self.main.route('', methods=['POST'])
+        @self.main.route('/', methods=['POST'])
         def create_client():
             try :
                 data = request.get_json()
