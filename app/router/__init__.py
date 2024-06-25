@@ -2,6 +2,7 @@ from .error import ErrorRoutes
 from .products import ProductRoutes
 from .clients import ClientsRoutes
 from .order import OrderRoutes
+from .orderDetail import OrderDetailRoutes
 
 class RouterConfig:
 
@@ -11,9 +12,11 @@ class RouterConfig:
         product_routes = ProductRoutes()
         clients_routes = ClientsRoutes()
         Order_routes = OrderRoutes()
+        OrderDetail_routes = OrderDetailRoutes()
         app.register_blueprint(error_routes.main)
         app.register_blueprint(product_routes.main)
         app.register_blueprint(clients_routes.main)
         app.register_blueprint(Order_routes.main)
+        app.register_blueprint(OrderDetail_routes.main)
 
         

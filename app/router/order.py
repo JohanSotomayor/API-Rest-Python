@@ -1,7 +1,7 @@
 # app/views.py
 from flask import Blueprint, jsonify, request, g
 from sqlalchemy.exc import SQLAlchemyError
-from ..models import db, Order, Client
+from ..models import db, Order, Client, OrderDetail
 
 class OrderRoutes:
     def __init__(self):
@@ -48,20 +48,57 @@ class OrderRoutes:
                     'clientID': client.ClientID,
                     'clientName': client.Name,
                     'clientCardId': client.CardId,
+                    
                 } for order, client in query_result
             ]
             return jsonify({"data":result}), 200
+        
+        @self.main.route('/dates/', methods=['GET'])
+        def get_ordersDate():
+            try :
+                date = request.args.get('date')
+                print('date', date)
+                query_result = db.session.query(Order, Client).join(Client, Order.ClientID == Client.ClientID)\
+                    .filter(Order.OrderDate >= date).all()
+                result = [
+                    {
+                        'orderID' : order.OrderID,
+                        'consecutive' : order.Consecutive,
+                        'orderDate' : order.OrderDate,
+                        'clientID' : order.ClientID,
+                        'totalAmount' : order.TotalAmount,
+                        'clientID': client.ClientID,
+                        'clientName': client.Name,
+                        'clientCardId': client.CardId,
+
+                    } for order, client in query_result
+                ]
+                return jsonify({"data":result}), 200
+            except SQLAlchemyError as e:
+                print(e)
+                db.session.rollback() 
+                return jsonify({'message': 'Error en la base de datos'}), 500 
+
 
         @self.main.route('/', methods=['DELETE'])
         def delete_order():
             try :
                 ids = request.args.getlist('ids') 
                 list_ids = [int(num) for num in ids[0].split(',')]
-                products = Order.query.filter(Order.OrderID.in_(list_ids)).all()
-                for product in products:
-                    db.session.delete(product) 
+
+                # Eliminamos referencia en Order Details
+                ordersDetails = OrderDetail.query.filter(OrderDetail.OrderID.in_(list_ids)).all()
+                for orderD in ordersDetails:
+                    db.session.delete(orderD) 
                 db.session.commit()
-                return jsonify({'message': 'Products deleted successfully'}), 200
+
+                orders = Order.query.filter(Order.OrderID.in_(list_ids)).all()
+                for order in orders:
+                    db.session.delete(order) 
+                db.session.commit()
+                return jsonify({'message': 'orders deleted successfully'}), 200
+            
             except SQLAlchemyError as e:
+                print(e)
                 db.session.rollback() 
                 return jsonify({'message': 'Error en la base de datos'}), 500 
